@@ -18,11 +18,8 @@ async def upload_resume(
 
     analysis = analyze_resume(text)
     domain_scores = compute_domain_scores(text)
-
     jd_score = compute_jd_match(text, job_description)
-
     ats_score = compute_ats_score(analysis, domain_scores, jd_score)
-
     gap = gap_analysis(analysis, domain_scores)
 
     return {
