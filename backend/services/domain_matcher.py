@@ -19,9 +19,9 @@ def compute_domain_scores(resume_text):
         vectors = vectorizer.fit_transform([resume_text, desc])
         similarity = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
 
-        scores[role] = round(float(similarity) * 100, 2)
+        scaled_score = min(similarity * 300, 100)
 
-    # sort
+        scores[role] = round(float(scaled_score), 2)
+
     scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
-
     return scores
