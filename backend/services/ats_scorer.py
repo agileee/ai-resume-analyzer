@@ -3,12 +3,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def compute_jd_match(resume_text, job_description):
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,2))
 
     vectors = vectorizer.fit_transform([resume_text, job_description])
     similarity = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
 
-    return round(min(float(similarity) * 300, 100), 2)
+    return round(similarity * 100, 2)
 
 
 def compute_ats_score(analysis, domain_scores, jd_score):

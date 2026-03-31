@@ -11,17 +11,24 @@ ROLE_PROFILES = {
 
 
 def compute_domain_scores(resume_text):
-    scores = {}
+    roles = list(ROLE_PROFILES.keys())
+    descriptions = list(ROLE_PROFILES.values())
 
-    for role, desc in ROLE_PROFILES.items():
-        vectorizer = TfidfVectorizer()
+    corpus = [resume_text] + descriptions
 
-        vectors = vectorizer.fit_transform([resume_text, desc])
-        similarity = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,2))
+    vectors = vectorizer.fit_transform(corpus)
 
-        scaled_score = min(similarity * 300, 100)
+    resume_vec = vectors[0]
+    role_vecs = vectors[1:]
 
-        scores[role] = round(float(scaled_score), 2)
+    similarities = cosine_similarity(resume_vec, role_vecs)[0]
 
-    scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
-    return scores
+    max_sim = max(similarities) if max(similarities) > 0 else 1
+
+    scores = {
+        role: round((sim / max_sim) * 100, 2)
+        for role, sim in zip(roles, similarities)
+    }
+
+    return dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
