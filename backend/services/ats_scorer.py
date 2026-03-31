@@ -1,14 +1,13 @@
 from services.domain_matcher import get_model
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
 def compute_jd_match(resume_text, job_description):
-    model = get_model()
+    vectorizer = TfidfVectorizer()
 
-    resume_emb = model.encode([resume_text])
-    jd_emb = model.encode([job_description])
-
-    similarity = cosine_similarity(resume_emb, jd_emb)[0][0]
+    vectors = vectorizer.fit_transform([resume_text, job_description])
+    similarity = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
 
     return round(float(similarity) * 100, 2)
 
