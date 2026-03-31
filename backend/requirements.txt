@@ -2,6 +2,4 @@ fastapi
 uvicorn
 python-multipart
 pdfminer.six
-sentence-transformers
 scikit-learn
-torch
