@@ -33,7 +33,7 @@ const Navbar = ({ onReset, isDashboard, currentPage, setCurrentPage }) => {
 
       <div className="flex items-center gap-4">
         <button 
-          onClick={handleGetStarted}
+         onClick={isDashboard ? onReset : handleGetStarted}
           className="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-200"
         >
           {isDashboard ? 'New Analysis' : 'Get Started'}

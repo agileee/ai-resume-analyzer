@@ -3,17 +3,33 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def compute_jd_match(resume_text, job_description):
-    vectorizer = TfidfVectorizer(stop_words='english')
-    vectors = vectorizer.fit_transform([resume_text, job_description])
+    resume_text = resume_text.lower()
+    job_description = job_description.lower()
 
+    # important tech keywords (expand as needed)
+    tech_keywords = [
+        "python", "java", "c++", "javascript", "react", "node", "html", "css",
+        "sql", "mongodb", "aws", "docker", "kubernetes", "api", "backend",
+        "frontend", "machine learning", "data", "flask", "django"
+    ]
+
+    # keyword overlap score
+    jd_words = set(job_description.split())
+    resume_words = set(resume_text.split())
+
+    keyword_matches = sum(1 for word in tech_keywords if word in resume_words and word in jd_words)
+    keyword_score = keyword_matches / max(len(tech_keywords), 1)
+
+    # cosine similarity (still useful)
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,2))
+    vectors = vectorizer.fit_transform([resume_text, job_description])
     cosine_sim = cosine_similarity(vectors[0:1], vectors[1:2])[0][0]
 
-    resume_words = set(resume_text.lower().split())
-    jd_words = set(job_description.lower().split())
-
-    overlap = len(resume_words & jd_words) / max(len(jd_words), 1)
-
-    final_score = (0.7 * cosine_sim + 0.3 * overlap) * 100
+    # combine (KEY FIX 🔥)
+    final_score = (0.6 * keyword_score + 0.4 * cosine_sim) * 100
 
     return round(min(final_score, 100), 2)
 
